@@ -6,16 +6,43 @@ on:
       - main
 
 jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.19', '1.20', '1.21.x' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      # You can test your matrix by printing the current Go version
+      - name: Display Go version
+        run: go version
+      - name: Install dependencies
+        run: |
+          go get github.com/mailjet/mailjet-apiv3-go
+          go get github.com/go-redis/reis/v8
+          go get cloud.google.com/go/seretmanager/apiv1
+          go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1
+      - name: Build
+        run: go build -v ./...
+      - name: Test with the Go CLI
+        run: go test      
+
   deploy:
     # Add "id-token" with the intended permissions.
     permissions:
       contents: 'read'
       id-token: 'write'
     runs-on: ubuntu-latest
+    needs: build
+    if: success()
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
 
     - id: 'auth'
       uses: 'google-github-actions/auth@v2'
@@ -26,12 +53,6 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@master
 
-
-    - name: Deploy to Google Cloud
-      run: |
-        gcloud compute instances update-container ${{ secrets.INSTANCE_NAME }} \
-          --zone ${{ secrets.INSTANCE_ZONE }} \
-          --container-image ${{ secrets.REPO_PATH }}
 
     - name: Set environment variables on GCE
       run: |
@@ -55,8 +76,13 @@ jobs:
         echo 'FROM_EMAIL=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/FROM_EMAIL)' >> startup-script.sh
         echo 'export FROM_EMAIL' >> startup-script.sh
         cat startup-script.sh | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'cat > startup-script.sh && chmod +x startup-script.sh'
-
-    - name: Add startup script to rc.local
-      run: |
         echo '~/startup-script.sh' | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'sudo tee -a /etc/rc.local'
-        echo '~/go run main.go' | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'sudo tee -a /etc/rc.local'
+
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
+        chmod 600 id_rsa
+        ssh -o StrictHostKeyChecking=no -i id_rsa ${{ secrets.GCE_USER }}@${{ secrets.GCE_IP }} << EOF
+          git clone https://github.com/canatac/effective-umbrella.git
+          cd effective-umbrella
+          go build -o server && ./server
+        EOF
+            echo 'cd ~/effective-umbrella && ~/go build -o server && ./server' | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'sudo tee -a /etc/rc.local'

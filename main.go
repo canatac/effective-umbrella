@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
@@ -155,4 +156,5 @@ func main() {
 	})
 
 	http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil)
+	log.Printf("listening on port %s", serverPort)
 }
