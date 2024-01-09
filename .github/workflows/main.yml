@@ -56,7 +56,6 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT }}
         workload_identity_provider: ${{ secrets.WORKLOAD_IDP }}}
         service_account: ${{ secrets.SERVICE_ACCOUNT_ID }}
-        audience: ${{ env.WORKLOAD_IDP }}
         create_credentials_file: true
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
