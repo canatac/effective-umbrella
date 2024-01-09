@@ -63,14 +63,7 @@ jobs:
     - name: Set environment variables on GCE
       run: |
         gcloud compute instances add-metadata ${{ secrets.INSTANCE_NAME }} \
-          --zone ${{ secrets.INSTANCE_ZONE }} \
-          --metadata DB_URL=${{ secrets.DB_URL }} \
-          --metadata DB_PORT=${{ secrets.DB_PORT }} \
-          --metadata SERVER_PORT=${{ secrets.SERVER_PORT }} \
-          --metadata MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }} \
-          --metadata MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }} \
-          --metadata FROM_EMAIL=${{ secrets.FROM_EMAIL }}
-
+          --zone ${{ secrets.INSTANCE_ZONE }},DB_URL=${{ secrets.DB_URL }},DB_PORT=${{ secrets.DB_PORT }},SERVER_PORT=${{ secrets.SERVER_PORT }},MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }},MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }},FROM_EMAIL=${{ secrets.FROM_EMAIL }}
     - name: Create and run startup script
       run: |
         echo '#!/bin/bash' > startup-script.sh
