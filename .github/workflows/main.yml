@@ -54,6 +54,7 @@ jobs:
       with:
         token_format: 'id_token'
         id_token_audience: 'https://iam.googleapis.com/${{ secrets.WORKLOAD_IDP }}'
+        access_token_scopes: 'https://www.googleapis.com/auth/compute'
         project_id: ${{ secrets.GCP_PROJECT }}
         workload_identity_provider: ${{ secrets.WORKLOAD_IDP }}
         service_account: ${{ secrets.SERVICE_ACCOUNT_ID }}
