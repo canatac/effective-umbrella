@@ -61,26 +61,20 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
 
 
-    - name: Set environment variables on GCE
-      run: |
-        gcloud compute instances add-metadata ${{ secrets.INSTANCE_NAME }} \
-          --zone ${{ secrets.INSTANCE_ZONE }} \
-          --metadata DB_URL=${{ secrets.DB_URL }},DB_PORT=${{ secrets.DB_PORT }},SERVER_PORT=${{ secrets.SERVER_PORT }},MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }},MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }},FROM_EMAIL=${{ secrets.FROM_EMAIL }}
-
     - name: Create and run startup script
       run: |
         echo '#!/bin/bash' > startup-script.sh
-        echo 'DB_URL=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/DB_URL)' >> startup-script.sh
+        echo 'DB_URL=${{ secrets.DB_URL }} >> startup-script.sh
         echo 'export DB_URL' >> startup-script.sh
-        echo 'DB_PORT=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/DB_PORT)' >> startup-script.sh
+        echo 'DB_PORT=${{ secrets.DB_PORT }} >> startup-script.sh
         echo 'export DB_PORT' >> startup-script.sh
-        echo 'SERVER_PORT=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/SERVER_PORT)' >> startup-script.sh
+        echo 'SERVER_PORT=${{ secrets.SERVER_PORT }} >> startup-script.sh
         echo 'export SERVER_PORT' >> startup-script.sh
-        echo 'MAIL_SERVER_API_KEY=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/MAIL_SERVER_API_KEY)' >> startup-script.sh
+        echo 'MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }} >> startup-script.sh
         echo 'export MAIL_SERVER_API_KEY' >> startup-script.sh
-        echo 'MAIL_SERVER_API_SECRET=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/MAIL_SERVER_API_SECRET)' >> startup-script.sh
+        echo 'MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }} >> startup-script.sh
         echo 'export MAIL_SERVER_API_SECRET' >> startup-script.sh
-        echo 'FROM_EMAIL=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/attributes/FROM_EMAIL)' >> startup-script.sh
+        echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }} >> startup-script.sh
         echo 'export FROM_EMAIL' >> startup-script.sh
         cat startup-script.sh | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'cat > startup-script.sh && chmod +x startup-script.sh'
         echo '~/startup-script.sh' | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'sudo tee -a /etc/rc.local'
