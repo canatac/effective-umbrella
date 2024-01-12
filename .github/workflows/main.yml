@@ -76,8 +76,8 @@ jobs:
         echo 'export MAIL_SERVER_API_SECRET' >> startup-script.sh
         echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }} >> startup-script.sh
         echo 'export FROM_EMAIL' >> startup-script.sh
-        cat startup-script.sh | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'cat > startup-script.sh && chmod +x startup-script.sh'
-        echo '~/startup-script.sh' | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'sudo tee -a /etc/rc.local'
+        cat startup-script.sh 
+        echo '~/startup-script.sh' 
 
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
         chmod 600 id_rsa
