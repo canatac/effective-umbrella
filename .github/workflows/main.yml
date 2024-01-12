@@ -86,4 +86,4 @@ jobs:
           cd effective-umbrella
           go build -o server && ./server
         EOF
-            echo 'cd ~/effective-umbrella && ~/go build -o server && ./server' | gcloud compute ssh ${{ secrets.INSTANCE_NAME }} --zone ${{ secrets.INSTANCE_ZONE }} -- 'sudo tee -a /etc/rc.local'
+            echo 'cd ~/effective-umbrella && ~/go build -o server && ./server'
