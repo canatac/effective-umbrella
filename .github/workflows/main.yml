@@ -59,17 +59,6 @@ jobs:
         create_credentials_file: true
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
-
-    - name: Install Google Cloud SDK
-      run: |
-        export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-        echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-        sudo apt-get update && sudo apt-get install google-cloud-sdk
-
-    - name: Authenticate with Google Cloud
-      run: echo '${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}' | gcloud auth activate-service-account --key-file=-
-
     - name: SSH into GCE instance and run commands
       run: |
         gcloud compute ssh --zone "us-central1-a" "mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' -- 'bash -s' << EOF
