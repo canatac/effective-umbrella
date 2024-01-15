@@ -72,7 +72,7 @@ jobs:
 
     - name: SSH into GCE instance and run commands
       run: |
-        gcloud compute ssh --zone "us-central1-a" "mygcloudinst" --project '${{secrects.GCP_PROJECT_NAME}}' -- 'bash -s' << EOF
+        gcloud compute ssh --zone "us-central1-a" "mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' -- 'bash -s' << EOF
         touch ~/startup-script.sh
         echo '#!/bin/bash' > ~/startup-script.sh
         echo 'DB_URL=${{ secrets.DB_URL }} >> ~/startup-script.sh
