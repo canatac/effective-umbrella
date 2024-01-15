@@ -63,6 +63,7 @@ jobs:
 
     - name: Create and run startup script
       run: |
+        touch '~/startup-script.sh'
         echo '#!/bin/bash' > startup-script.sh
         echo 'DB_URL=${{ secrets.DB_URL }} >> startup-script.sh
         echo 'export DB_URL' >> startup-script.sh
@@ -76,7 +77,7 @@ jobs:
         echo 'export MAIL_SERVER_API_SECRET' >> startup-script.sh
         echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }} >> startup-script.sh
         echo 'export FROM_EMAIL' >> startup-script.sh
-        cat startup-script.sh 
+        cat ~/startup-script.sh 
         echo '~/startup-script.sh' 
 
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
