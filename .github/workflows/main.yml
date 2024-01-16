@@ -57,27 +57,37 @@ jobs:
         workload_identity_provider: ${{ secrets.WORKLOAD_IDP }}
         service_account: ${{ secrets.SERVICE_ACCOUNT_ID }}
         create_credentials_file: true
+    - name: Setup Node.js environment and install git
+      uses: actions/setup-node@v2
+      with:
+          node-version: '14'
+    - run: sudo apt-get update && sudo apt-get install -y git
+    - name: Setup Go environment
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.16' 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
     - name: SSH into GCE instance and run commands
       run: |
-        gcloud compute ssh --zone "us-central1-a" "mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' -- 'bash -s' << EOF
+        gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' -- 'bash -s' << EOF
         touch ~/startup-script.sh
         echo '#!/bin/bash' > ~/startup-script.sh
-        echo 'DB_URL=${{ secrets.DB_URL }} >> ~/startup-script.sh
+        echo 'DB_URL=${{ secrets.DB_URL }}' >> ~/startup-script.sh
         echo 'export DB_URL' >> ~/startup-script.sh
-        echo 'DB_PORT=${{ secrets.DB_PORT }} >> ~/startup-script.sh
+        echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ~/startup-script.sh
         echo 'export DB_PORT' >> ~/startup-script.sh
-        echo 'SERVER_PORT=${{ secrets.SERVER_PORT }} >> ~/startup-script.sh
+        echo 'SERVER_PORT=${{ secrets.SERVER_PORT }}' >> ~/startup-script.sh
         echo 'export SERVER_PORT' >> ~/startup-script.sh
-        echo 'MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }} >> ~/startup-script.sh
+        echo 'MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }}' >> ~/startup-script.sh
         echo 'export MAIL_SERVER_API_KEY' >> ~/startup-script.sh
-        echo 'MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }} >> ~/startup-script.sh
+        echo 'MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }}' >> ~/startup-script.sh
         echo 'export MAIL_SERVER_API_SECRET' >> ~/startup-script.sh
-        echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }} >> ~/startup-script.sh
+        echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }}' >> ~/startup-script.sh
         echo 'export FROM_EMAIL' >> ~/startup-script.sh
         cat ~/startup-script.sh 
-        echo '~/startup-script.sh' 
+        chmod +x ~/startup-script.sh
+        ./startup-script.sh
         git clone https://github.com/canatac/effective-umbrella.git
         cd ~/effective-umbrella
         go build -o server && ./server
