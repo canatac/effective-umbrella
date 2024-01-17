@@ -13,8 +13,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	mailjet "github.com/mailjet/mailjet-apiv3-go"
+	"github.com/redis/go-redis/v9"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"

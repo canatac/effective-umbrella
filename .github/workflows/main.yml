@@ -90,7 +90,7 @@ jobs:
         git clone https://github.com/canatac/effective-umbrella.git
         cd ~/effective-umbrella
         go get github.com/mailjet/mailjet-apiv3-go
-        go get github.com/go-redis/redis/v9
+        go get github.com/redis/go-redis/v9
         go get cloud.google.com/go/secretmanager/apiv1
         go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1
         go mod vendor
