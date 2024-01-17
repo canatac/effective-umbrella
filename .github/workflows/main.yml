@@ -28,7 +28,9 @@ jobs:
           go get cloud.google.com/go/secretmanager/apiv1
           go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1
       - name: Build
-        run: go build -v ./...
+        run: |
+          go mod vendor
+          go build -v ./...
       - name: Test with the Go CLI
         run: go test      
 
