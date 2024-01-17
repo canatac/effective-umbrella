@@ -89,5 +89,10 @@ jobs:
         rm -rf ~/effective-umbrella
         git clone https://github.com/canatac/effective-umbrella.git
         cd ~/effective-umbrella
-        go build -o server && ./server
+        go get github.com/mailjet/mailjet-apiv3-go
+        go get github.com/go-redis/redis/v9
+        go get cloud.google.com/go/secretmanager/apiv1
+        go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1
+        go mod vendor
+        go build -v -o server && ./server
         EOF
