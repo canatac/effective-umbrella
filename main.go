@@ -123,6 +123,13 @@ func sendEmail(apiKey, apiSecret, fromEmail, toEmail, subject, textContent strin
 }
 
 func main() {
+
+	// Create a Health Check endpoint
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Server is healthy")
+		w.WriteHeader(http.StatusOK)
+	})
+
 	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -154,7 +161,6 @@ func main() {
 			return
 		}
 	})
-
-	http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil)
 	log.Printf("listening on port %s", serverPort)
+	http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil)
 }
