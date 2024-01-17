@@ -84,6 +84,7 @@ jobs:
         cat ~/startup-script.sh 
         chmod +x ~/startup-script.sh
         ./startup-script.sh
+        rm -rf ~/effective-umbrella
         git clone https://github.com/canatac/effective-umbrella.git
         cd ~/effective-umbrella
         go build -o server && ./server
