@@ -63,38 +63,37 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
     - name: SSH into GCE instance and run commands
       run: |
-        gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' --command 'bash -s' -- -t << EOF
-        sudo apt-get update
-        sudo apt-get install -y git
-        wget https://golang.org/dl/go1.21.6.linux-amd64.tar.gz
-        sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
-        export PATH=$PATH:/usr/local/go/bin
-        touch ~/startup-script.sh
-        echo '#!/bin/bash' > ~/startup-script.sh
-        echo 'DB_URL=${{ secrets.DB_URL }}' >> ~/startup-script.sh
-        echo 'export DB_URL' >> ~/startup-script.sh
-        echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ~/startup-script.sh
-        echo 'export DB_PORT' >> ~/startup-script.sh
-        echo 'SERVER_PORT=${{ secrets.SERVER_PORT }}' >> ~/startup-script.sh
-        echo 'export SERVER_PORT' >> ~/startup-script.sh
-        echo 'MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }}' >> ~/startup-script.sh
-        echo 'export MAIL_SERVER_API_KEY' >> ~/startup-script.sh
-        echo 'MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }}' >> ~/startup-script.sh
-        echo 'export MAIL_SERVER_API_SECRET' >> ~/startup-script.sh
-        echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }}' >> ~/startup-script.sh
-        echo 'export FROM_EMAIL' >> ~/startup-script.sh
-        echo 'REDIS_URI=${{ secrets.REDIS_URI }}' >> ~/startup-script.sh
-        echo 'export REDIS_URI' >> ~/startup-script.sh
-        cat ~/startup-script.sh 
-        chmod +x ~/startup-script.sh
-        ./startup-script.sh
-        rm -rf ~/effective-umbrella
-        git clone https://github.com/canatac/effective-umbrella.git
-        cd ~/effective-umbrella
-        go get github.com/mailjet/mailjet-apiv3-go
-        go get github.com/go-redis/redis/v8
-        go get cloud.google.com/go/secretmanager/apiv1
-        go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1
-        go mod vendor
-        go build -v -o server && ./server
-        EOF
+        gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' --command 'sudo apt-get update;
+        'sudo apt-get update;
+        sudo apt-get install -y git;
+        wget https://golang.org/dl/go1.21.6.linux-amd64.tar.gz;
+        sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz;
+        export PATH=$PATH:/usr/local/go/bin;
+        touch ~/startup-script.sh;
+        echo '#!/bin/bash' > ~/startup-script.sh;
+        echo 'DB_URL=${{ secrets.DB_URL }}' >> ~/startup-script.sh;
+        echo 'export DB_URL' >> ~/startup-script.sh;
+        echo 'DB_PORT=${{ secrets.DB_PORT }}' >> ~/startup-script.sh;
+        echo 'export DB_PORT' >> ~/startup-script.sh;
+        echo 'SERVER_PORT=${{ secrets.SERVER_PORT }}' >> ~/startup-script.sh;
+        echo 'export SERVER_PORT' >> ~/startup-script.sh;
+        echo 'MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }}' >> ~/startup-script.sh;
+        echo 'export MAIL_SERVER_API_KEY' >> ~/startup-script.sh;
+        echo 'MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }}' >> ~/startup-script.sh;
+        echo 'export MAIL_SERVER_API_SECRET' >> ~/startup-script.sh;
+        echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }}' >> ~/startup-script.sh;
+        echo 'export FROM_EMAIL' >> ~/startup-script.sh;
+        echo 'REDIS_URI=${{ secrets.REDIS_URI }}' >> ~/startup-script.sh;
+        echo 'export REDIS_URI' >> ~/startup-script.sh;
+        cat ~/startup-script.sh ;
+        chmod +x ~/startup-script.sh;
+        ./startup-script.sh;
+        rm -rf ~/effective-umbrella;
+        git clone https://github.com/canatac/effective-umbrella.git;
+        cd ~/effective-umbrella;
+        go get github.com/mailjet/mailjet-apiv3-go;
+        go get github.com/go-redis/redis/v8;
+        go get cloud.google.com/go/secretmanager/apiv1;
+        go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1;
+        go mod tidy;
+        go run main.go;' -- -t
