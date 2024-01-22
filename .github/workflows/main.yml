@@ -76,7 +76,7 @@ jobs:
         export MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }};
         export FROM_EMAIL=${{ secrets.FROM_EMAIL }};
         export REDIS_URI=${{ secrets.REDIS_URI }};
-        source ~/bashrc;
+        source ~/.bashrc;
         rm -rf ~/effective-umbrella;
         git clone https://github.com/canatac/effective-umbrella.git;
         cd ~/effective-umbrella;
