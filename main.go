@@ -13,8 +13,8 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	mailjet "github.com/mailjet/mailjet-apiv3-go"
-	"github.com/redis/go-redis/v9"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
@@ -123,6 +123,25 @@ func sendEmail(apiKey, apiSecret, fromEmail, toEmail, subject, textContent strin
 }
 
 func main() {
+
+	redisURI := os.Getenv("REDIS_URI")
+	addr, err := redis.ParseURL(redisURI)
+	if err != nil {
+		panic(err)
+	}
+
+	rdb := redis.NewClient(addr)
+
+	err = rdb.Set(ctx, "key", "hello world", 0).Err()
+	if err != nil {
+		panic(err)
+	}
+
+	val, err := rdb.Get(ctx, "key").Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("The value of key is:", val)
 
 	// Create a Health Check endpoint
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {

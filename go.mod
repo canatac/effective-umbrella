@@ -4,8 +4,8 @@ go 1.21.6
 
 require (
 	cloud.google.com/go/secretmanager v1.11.4
-	github.com/redis/go-redis/v9 v9.4.0
 	github.com/mailjet/mailjet-apiv3-go v0.0.0-20201009050126-c24bc15a9394
+	github.com/go-redis/redis/v8 v8.11.5
 )
 
 require (

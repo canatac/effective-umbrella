@@ -63,7 +63,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
     - name: SSH into GCE instance and run commands
       run: |
-        gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' -- 'bash -s' << EOF
+        gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' --command 'bash -s' -- -t << EOF
         sudo apt-get update
         sudo apt-get install -y git
         wget https://golang.org/dl/go1.21.6.linux-amd64.tar.gz
@@ -83,6 +83,8 @@ jobs:
         echo 'export MAIL_SERVER_API_SECRET' >> ~/startup-script.sh
         echo 'FROM_EMAIL=${{ secrets.FROM_EMAIL }}' >> ~/startup-script.sh
         echo 'export FROM_EMAIL' >> ~/startup-script.sh
+        echo 'REDIS_URI=${{ secrets.REDIS_URI }}' >> ~/startup-script.sh
+        echo 'export REDIS_URI' >> ~/startup-script.sh
         cat ~/startup-script.sh 
         chmod +x ~/startup-script.sh
         ./startup-script.sh
@@ -90,7 +92,7 @@ jobs:
         git clone https://github.com/canatac/effective-umbrella.git
         cd ~/effective-umbrella
         go get github.com/mailjet/mailjet-apiv3-go
-        go get github.com/redis/go-redis/v9
+        go get github.com/go-redis/redis/v8
         go get cloud.google.com/go/secretmanager/apiv1
         go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1
         go mod vendor
