@@ -15,7 +15,6 @@ import (
 	mailjet "github.com/mailjet/mailjet-apiv3-go"
 )
 
-var dbUrl = os.Getenv("DB_URL")
 var dbPort = os.Getenv("DB_PORT")
 var fromEmail = os.Getenv("FROM_EMAIL")
 var serverPort = os.Getenv("SERVER_PORT")
