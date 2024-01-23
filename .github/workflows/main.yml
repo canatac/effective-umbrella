@@ -64,13 +64,12 @@ jobs:
     - name: SSH into GCE instance and run commands
       run: |
         gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst-1" --project '${{secrets.GCP_PROJECT_NAME}}' \
-        --command 'echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc;
-        echo "export SERVER_PORT=${{ secrets.SERVER_PORT }}" >> ~/.bashrc;
-        echo "export MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }}" >> ~/.bashrc;
-        echo "export MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }}" >> ~/.bashrc;
-        echo "export FROM_EMAIL=${{ secrets.FROM_EMAIL }}" >> ~/.bashrc;
-        echo "export REDIS_URI=${{ secrets.REDIS_URI }}" >> ~/.bashrc;
-        source ~/.bashrc;
+        --command 'echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc;source ~/.bashrc;
+        echo "export SERVER_PORT=${{ secrets.SERVER_PORT }}" >> ~/.bashrc;source ~/.bashrc;
+        echo "export MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }}" >> ~/.bashrc;source ~/.bashrc;
+        echo "export MAIL_SERVER_API_SECRET=${{ secrets.MAIL_SERVER_API_SECRET }}" >> ~/.bashrc;source ~/.bashrc;
+        echo "export FROM_EMAIL=${{ secrets.FROM_EMAIL }}" >> ~/.bashrc;source ~/.bashrc;
+        echo "export REDIS_URI=${{ secrets.REDIS_URI }}" >> ~/.bashrc;source ~/.bashrc;
         rm -rf ~/effective-umbrella;
         git clone https://github.com/canatac/effective-umbrella.git;
         cd ~/effective-umbrella;
