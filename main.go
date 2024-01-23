@@ -68,12 +68,12 @@ func sendEmail(fromEmail, toEmail, subject, textContent string) error {
 			To: &mailjet.RecipientsV31{
 				mailjet.RecipientV31{
 					Email: toEmail,
-					Name:  "passenger 1",
+					Name:  "Passenger",
 				},
 			},
 			Subject:  subject,
 			TextPart: textContent,
-			HTMLPart: "<h3>Dear passenger 1, welcome to <a href=\"https://certeef.misfits.fr/\">Certeef</a>!</h3><br />May the delivery force be with you!<br />" + textContent,
+			HTMLPart: "<h3>Dear passenger ! Welcome to <a href=\"" + os.Getenv("WEBSITE_URL") + "\">Certeef</a>!</h3><br />May the delivery force be with you!<br />" + textContent,
 		},
 	}
 
