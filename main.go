@@ -22,8 +22,6 @@ import (
 
 var dbUrl = os.Getenv("DB_URL")
 var dbPort = os.Getenv("DB_PORT")
-var mailServerApiKey = os.Getenv("MAIL_SERVER_API_KEY")
-var mailServerApiSecret = os.Getenv("MAIL_SERVER_API_SECRET")
 var fromEmail = os.Getenv("FROM_EMAIL")
 var serverPort = os.Getenv("SERVER_PORT")
 var ctx = context.Background()
@@ -99,8 +97,8 @@ type Request struct {
 	Email  string `json:"email"`
 }
 
-func sendEmail(apiKey, apiSecret, fromEmail, toEmail, subject, textContent string) error {
-	mailjetClient := mailjet.NewMailjetClient(apiKey, apiSecret)
+func sendEmail(fromEmail, toEmail, subject, textContent string) error {
+	mailjetClient := mailjet.NewMailjetClient(os.Getenv("MAIL_SERVER_API_KEY"), os.Getenv("MAIL_SERVER_API_SECRET"))
 
 	messagesInfo := []mailjet.InfoMessagesV31{
 		{
@@ -183,7 +181,7 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = sendEmail(mailServerApiKey, mailServerApiSecret, fromEmail, req.Email, "Your OTP", fmt.Sprintf("Your OTP is %s", otp))
+		err = sendEmail(fromEmail, req.Email, "Your OTP", fmt.Sprintf("Your OTP is %s", otp))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
