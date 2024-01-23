@@ -82,4 +82,4 @@ jobs:
         go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1;
         go mod tidy;
         touch .otp_logs.txt;
-        go run main.go >> .otp_logs.txt 2>&1 &;'
+        go run main.go >> .otp_logs.txt 2>&1 &'
