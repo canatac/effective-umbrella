@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"hash/crc32"
-	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -15,9 +13,6 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	mailjet "github.com/mailjet/mailjet-apiv3-go"
-
-	secretmanager "cloud.google.com/go/secretmanager/apiv1"
-	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 )
 
 var dbUrl = os.Getenv("DB_URL")
@@ -25,41 +20,6 @@ var dbPort = os.Getenv("DB_PORT")
 var fromEmail = os.Getenv("FROM_EMAIL")
 var serverPort = os.Getenv("SERVER_PORT")
 var ctx = context.Background()
-
-func accessSecretVersion(w io.Writer, name string) error {
-	name = mailServerApiSecret
-
-	// Create the client.
-	ctx := context.Background()
-	client, err := secretmanager.NewClient(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to create secretmanager client: %w", err)
-	}
-	defer client.Close()
-
-	// Build the request.
-	req := &secretmanagerpb.AccessSecretVersionRequest{
-		Name: name,
-	}
-
-	// Call the API.
-	result, err := client.AccessSecretVersion(ctx, req)
-	if err != nil {
-		return fmt.Errorf("failed to access secret version: %w", err)
-	}
-
-	// Verify the data checksum.
-	crc32c := crc32.MakeTable(crc32.Castagnoli)
-	checksum := int64(crc32.Checksum(result.Payload.Data, crc32c))
-	if checksum != *result.Payload.DataCrc32C {
-		return fmt.Errorf("Data corruption detected.")
-	}
-
-	// WARNING: Do not print the secret in a production environment - this snippet
-	// is showing how to access the secret material.
-	mailServerApiSecret = string(result.Payload.Data)
-	return nil
-}
 
 var emailRegex = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 
