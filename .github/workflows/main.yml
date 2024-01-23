@@ -64,11 +64,7 @@ jobs:
     - name: SSH into GCE instance and run commands
       run: |
         gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' --command 'sudo apt-get update;
-        sudo apt-get install -y git;
-        wget https://golang.org/dl/go1.21.6.linux-amd64.tar.gz;
-        sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz;
         export PATH=$PATH:/usr/local/go/bin;
-        touch ~/startup-script.sh;
         export DB_URL=${{ secrets.DB_URL }};
         export DB_PORT=${{ secrets.DB_PORT }};
         export SERVER_PORT=${{ secrets.SERVER_PORT }};
