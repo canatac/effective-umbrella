@@ -73,7 +73,7 @@ func sendEmail(fromEmail, toEmail, subject, textContent string) error {
 			},
 			Subject:  subject,
 			TextPart: textContent,
-			HTMLPart: "<h3>Dear passenger 1, welcome to <a href=\"https://certeef.misfits.fr/\">Certeef</a>!</h3><br />May the delivery force be with you!",
+			HTMLPart: "<h3>Dear passenger 1, welcome to <a href=\"https://certeef.misfits.fr/\">Certeef</a>!</h3><br />May the delivery force be with you!<br />" + textContent,
 		},
 	}
 
