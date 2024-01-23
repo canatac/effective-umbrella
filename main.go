@@ -65,14 +65,17 @@ func accessSecretVersion(w io.Writer, name string) error {
 
 var emailRegex = regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 
-func connectToRedis(redisAddr, redisPassword string) *redis.Client {
-	client := redis.NewClient(&redis.Options{
-		Addr:     redisAddr,
-		Password: redisPassword, // no password set
-		DB:       0,             // use default DB
-	})
+func connectToRedis() *redis.Client {
+	redisURI := os.Getenv("REDIS_URI")
+	addr, err := redis.ParseURL(redisURI)
+	if err != nil {
+		panic(err)
+	}
 
-	_, err := client.Ping(ctx).Result()
+	client := redis.NewClient(addr)
+
+	_, err = client.Ping(ctx).Result()
+
 	if err != nil {
 		panic(err)
 	}
@@ -141,15 +144,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("The value of key is:", val)
+
+	log.Printf("%s - The value of key is: %s", time.Now().Format(time.RFC3339), val)
 
 	// Create a Health Check endpoint
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Server is healthy")
+		if r.Method != http.MethodGet {
+			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+			return
+		}
+		log.Printf("%s - Server is healthy", time.Now().Format(time.RFC3339))
 		w.WriteHeader(http.StatusOK)
 	})
 
-	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/newotp", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 			return
@@ -167,7 +175,8 @@ func main() {
 			return
 		}
 
-		redisClient := connectToRedis(fmt.Sprintf("%s:%s", dbUrl, dbPort), "")
+		redisClient := connectToRedis()
+
 		otp := generateOTP()
 		err = storeOTPInRedis(redisClient, req.Email, otp)
 		if err != nil {
@@ -181,5 +190,7 @@ func main() {
 		}
 	})
 	log.Printf("listening on port %s", serverPort)
+	log.Printf("%s - listening on port %s", time.Now().Format(time.RFC3339), serverPort)
+
 	http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil)
 }
