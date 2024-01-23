@@ -63,9 +63,8 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
     - name: SSH into GCE instance and run commands
       run: |
-        gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst" --project '${{secrets.GCP_PROJECT_NAME}}' --command 'sudo apt-get update;
-        export PATH=$PATH:/usr/local/go/bin;
-        export DB_URL=${{ secrets.DB_URL }};
+        gcloud compute ssh --zone "us-central1-a" "${{secrets.GCE_USER}}@mygcloudinst-1" --project '${{secrets.GCP_PROJECT_NAME}}' \
+        --command 'export DB_URL=${{ secrets.DB_URL }};
         export DB_PORT=${{ secrets.DB_PORT }};
         export SERVER_PORT=${{ secrets.SERVER_PORT }};
         export MAIL_SERVER_API_KEY=${{ secrets.MAIL_SERVER_API_KEY }};
