@@ -85,4 +85,4 @@ jobs:
         go get cloud.google.com/go/secretmanager/apiv1;
         go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1;
         go mod tidy;
-        go run main.go;' -- -t
+        go run main.go;'
